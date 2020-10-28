@@ -1,0 +1,259 @@
+@function decimal-round ($number, $digits: 0, $mode: round) {
+  $n: 1;
+  // $number must be a number
+  @if type-of($number) != number {
+    @warn '#{ $number } is not a number.';
+    @return $number;
+  }
+  // $digits must be a unitless number
+  @if type-of($digits) != number {
+    @warn '#{ $digits } is not a number.';
+    @return $number;
+  } @else if not unitless($digits) {
+    @warn '#{ $digits } has a unit.';
+    @return $number;
+  }
+  @for $i from 1 through $digits {
+    $n: $n * 10;
+  }
+  @if $mode == round {
+    @return round($number * $n) / $n;
+  } @else if $mode == ceil {
+    @return ceil($number * $n) / $n;
+  } @else if $mode == floor {
+    @return floor($number * $n) / $n;
+  } @else {
+    @warn '#{ $mode } is undefined keyword.';
+    @return $number;
+  }
+}
+
+
+@function decimal-ceil ($number, $digits: 0) {
+  @return decimal-round($number, $digits, ceil);
+}
+
+@function decimal-floor ($number, $digits: 0) {
+  @return decimal-round($number, $digits, floor);
+}
+
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+  @return $number;
+}
+
+@function em($pixels, $c: $font-size) {
+  @if type-of($pixels) != 'number' {
+    $pixels: $pixels + 'px';
+  }
+  @else if unit($pixels) == em {
+    @return $pixels;
+  }
+  $number: decimal-ceil(strip-unit($pixels/$c), 2);
+  @return $number * 1em;
+}
+
+@mixin text-wrap() {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-word;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+@mixin arrow-up($color, $size: 10px, $width: 2px) {
+  border-bottom: none;
+  border-left: $width solid $color;
+  border-right: none;
+  border-top: $width solid $color;
+  display: inline-block;
+  height: $size;
+  transform: rotate(45deg);
+  width: $size;
+}
+
+@mixin arrow-down($color, $size: 10px, $width: 2px) {
+  border-bottom: $width solid $color;
+  border-left: none;
+  border-right: $width solid $color;
+  border-top: none;
+  display: inline-block;
+  height: $size;
+  transform: rotate(45deg);
+  width: $size;
+}
+
+@mixin arrow-right($color, $size: 10px, $width: 2px) {
+  border-bottom: none;
+  border-left: none;
+  border-right: $width solid $color;
+  border-top: $width solid $color;
+  display: inline-block;
+  height: $size;
+  transform: rotate(45deg);
+  width: $size;
+}
+
+@mixin arrow-left($color, $size: 10px, $width: 2px) {
+  border-bottom: $width solid $color;
+  border-left: $width solid $color;
+  border-right: none;
+  border-top: none;
+  display: inline-block;
+  height: $size;
+  transform: rotate(45deg);
+  width: $size;
+}
+
+@mixin triangle-left($color, $width, $height) {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: $height/2 $width $height/2 0;
+  border-color: transparent $color transparent transparent;
+}
+
+@mixin triangle-right($color, $width, $height) {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: $height/2 0 $height/2 $width;
+  border-color: transparent transparent transparent $color;
+}
+
+@mixin triangle-down($color, $width, $height) {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: $height $width/2 0 $width/2;
+  border-color: $color transparent transparent transparent;
+}
+
+@mixin triangle-up($color, $width, $height) {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 $width/2 $height $width/2;
+  border-color: transparent transparent $color transparent;
+}
+
+@mixin cross($color, $size: 100%, $width: 30%) {
+  &::before, &::after {
+    background: $color;
+    content:"";
+    display: block;
+    height: $width;
+    margin-top: -($width/2);
+    position: absolute;
+    top: 50%;
+    transform: rotate(45deg);
+    width: $size;
+  }
+  &::after {
+    transform: rotate(-45deg);
+  }
+}
+@mixin plus($color, $size: 100%, $width: 30%) {
+  &::before {
+    background: $color;
+    content:"";
+    display: block;
+    height: $width;
+    margin-top: -($width/2);
+    position: absolute;
+    top: 50%;
+    width: $size;
+  }
+  &::after {
+    background: $color;
+    content:"";
+    display: block;
+    height: $size;
+    left: 50%;
+    margin-left: -($width/2);
+    position: absolute;
+    width: $width;
+  }
+}
+
+@mixin mark($color, $width: 10px, $height: 5px, $border: 1px, $angle: -45deg)
+{
+  border-bottom: $border solid $color;
+  border-left: $border solid $color;
+  display: block;
+  height: $height;
+  transform: rotate($angle);
+  width: $width;
+}
+
+@mixin placeholder()
+{
+  &::-webkit-input-placeholder {@content}
+  &::-moz-placeholder          {@content}
+  &:-moz-placeholder           {@content}
+  &:-ms-input-placeholder      {@content}
+}
+
+@mixin drop-down () {
+  opacity: 0;
+  position: absolute;
+  margin-top: -999999px;
+  transition: opacity .2s, z-index 0s linear .2s, margin-top 0s linear .2s;
+  z-index: -1;
+}
+
+@mixin drop-down-active () {
+  opacity: 1;
+  margin-top: 0;
+  transition: opacity .2s, z-index 0s;
+  z-index: 1;
+}
+
+@mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white,  50%)) {
+  // For Google Chrome
+  ::-webkit-scrollbar {
+    width:  $size;
+    height: $size;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: $foreground-color;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: $background-color;
+  }
+
+  // For Internet Explorer
+  body {
+    scrollbar-face-color: $foreground-color;
+    scrollbar-track-color: $background-color;
+  }
+}
+
+@mixin resetScrollbars() {
+  ::-webkit-scrollbar {
+    width: initial;
+    height: initial;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: initial;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: initial;
+  }
+
+  // For Internet Explorer
+  body {
+    scrollbar-face-color: initial;
+    scrollbar-track-color: initial;
+  }
+
+}

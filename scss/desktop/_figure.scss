@@ -1,0 +1,56 @@
+.figure {
+
+  height: em(96);
+  position: absolute;
+  width: em(96);
+  z-index: 1;
+
+
+  &.active {
+    z-index: 2;
+  }
+
+  &_white {
+    &_king {
+      @include inline-svg($white_king);
+    }
+    &_queen {
+      @include inline-svg($white_queen);
+    }
+    &_bishop {
+      @include inline-svg($white_bishop);
+    }
+    &_knight {
+      @include inline-svg($white_knight);
+    }
+    &_rook {
+      @include inline-svg($white_rook);
+    }
+    &_pawn {
+      @include inline-svg($white_pawn);
+    }
+  }
+  &_black {
+    &_king {
+      @include inline-svg($black_king);
+    }
+    &_queen {
+      @include inline-svg($black_queen);
+    }
+    &_bishop {
+      @include inline-svg($black_bishop);
+    }
+    &_knight {
+      @include inline-svg($black_knight);
+    }
+    &_rook {
+      @include inline-svg($black_rook);
+    }
+    &_pawn {
+      @include inline-svg($black_pawn);
+    }
+  }
+
+
+
+}

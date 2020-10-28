@@ -1,0 +1,40 @@
+.board {
+
+  display: inline-block;
+  margin: auto;
+  position:relative;
+
+  &__table {
+    border-collapse: collapse;
+    table-layout: fixed;
+
+  }
+
+  &__cell {
+    padding-top: em(96);
+    position: relative;
+    user-select: none;
+    width: em(96);
+    &_black {
+      background: $board-black;
+    }
+    &_white {
+      background: $board-white;
+    }
+
+  }
+
+  &__edge {
+    background: $board-edge;
+    color: $white;
+    font-weight: $Bold;
+    height: em(30);
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+    &:first-child, &:last-child {
+      height: auto;
+      width: em(30);
+    }
+  }
+}

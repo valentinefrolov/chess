@@ -1,0 +1,37 @@
+$font-size: 15px;
+
+
+$Thin: 100;
+$ExtraLight: 200;
+$UltraLight: 200;
+$Light: 300;
+$Normal: 400;
+$Book: 400;
+$Regular: 400;
+$Medium: 500;
+$SemiBold: 600;
+$DemiBold: 600;
+$Bold: 700;
+$ExtraBold: 800;
+$UltraBold: 800;
+$Black: 900;
+$Heavy: 900;
+
+$bp: 1200px;
+
+$o025: 7;
+$o03: 13;
+$o05: 15;
+$o075: 23;
+$o1: 30;
+$o15: 40;
+$o2: 60;
+$o23: 72;
+
+$white: #F0D3B1;
+$black: #AF582B;
+
+
+@import "tools";
+@import "color";
+@import "svg";

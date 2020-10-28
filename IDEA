@@ -1,0 +1,14 @@
+1. intro window
+    game_mode:
+        local
+        internet
+            if(internet) {
+                send mail
+                choose color
+            }
+    start
+
+2. main window
+    open socket
+    draw board
+    draw figures

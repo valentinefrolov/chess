@@ -1,0 +1,22 @@
+@import "_common";
+@import "reset";
+
+html {
+  height: 100%;
+}
+
+body {
+  background: $white;
+  font-weight: $Regular;
+  font-size: $font-size;
+  font-size: ($font-size*100/($bp))*1vw;
+  height: 100%;
+  line-height: 1em;
+  margin: 0;
+  overflow-x: hidden;
+  visibility: visible;
+}
+
+@import "desktop/*";
+
+

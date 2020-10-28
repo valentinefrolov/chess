@@ -1,0 +1,54 @@
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  max-height: 999999px;
+  box-sizing: border-box;
+  line-height: inherit;
+  z-index: auto;
+  word-spacing: 0;
+  outline: none;
+  border: none;
+  hyphens: none;
+}
+a {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+a:not([class]) {
+  text-decoration: underline;
+  &:hover {
+    text-decoration: none;
+  }
+}
+b, strong {
+  font-weight: bold;
+}
+script, style {
+  display: none!important;
+}
+ul, ol {
+  list-style: none;
+}
+input, select, textarea, button {
+  border: none;
+  background: none;
+  font-size: inherit;
+  color: inherit;
+  line-height: inherit;
+  font-family: inherit;
+  &::-webkit-input-placeholder {color: inherit; opacity: 1;}
+  &::-moz-placeholder          {color: inherit; opacity: 1;}
+  &:-moz-placeholder           {color: inherit; opacity: 1;}
+  &:-ms-input-placeholder      {color: inherit; opacity: 1;}
+}
+article, aside, footer, header, nav, section {
+  display: block;
+}
+h1,h2,h3,h4,h5,h6 {
+  font-weight: inherit;
+}
+body {
+  position: relative;
+  min-height: 100%;
+}

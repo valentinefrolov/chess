@@ -1,0 +1,13 @@
+{
+    "autoload": {
+        "psr-4": {
+            "": ["source/", "tests/"]
+        }
+    },
+    "require": {
+        "cboden/ratchet": "^0.4.3",
+        "phpunit/phpunit": "^7.0.0",
+        "ext-pdo": "*",
+        "ext-json": "*"
+    }
+}
