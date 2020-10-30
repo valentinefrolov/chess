@@ -39,7 +39,6 @@ class Pawn extends AbstractFigure
 
         // cant eat two cell left or right
         if($this->x != $x && $diff > 1) {
-            echo $this->x . ' ' .$x . "\n";
             return false;
         }
 

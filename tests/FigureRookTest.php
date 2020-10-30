@@ -11,7 +11,7 @@ use Chess\Game;
 use Chess\Player;
 use PHPUnit\Framework\TestCase;
 
-class FigureQueenTest extends TestCase
+class FigureRookTest extends TestCase
 {
     /** @var Game  */
     protected $game = null;
@@ -19,17 +19,13 @@ class FigureQueenTest extends TestCase
     protected $player = null;
     /** @var Player  */
     protected $enemyPlayer = null;
-    /** @var Queen  */
+    /** @var Rook  */
     protected $figure = null;
     /** @var King */
     protected $allyKing = null;
-    /** @var Pawn */
-    protected $allyPawn = null;
-    /** @var Pawn */
-    protected $testPawn = null;
     /** @var King */
     protected $enemyKing = null;
-    /** @var Rook */
+    /** @var Bishop */
     protected $enemyBishop = null;
 
     function setUp()
@@ -39,21 +35,17 @@ class FigureQueenTest extends TestCase
         $this->game->init();
 
         $this->player = $this->game->addPlayer('test1');
-        $this->figure = new Queen($this->player, 3, 2);
-        $this->allyKing = new King($this->player, 5, 1);
-        $this->allyPawn = new Pawn($this->player, 6, 2);
-        $this->testPawn = new Pawn($this->player, 6, 5);
+        $this->figure = new Rook($this->player, 6, 0);
+        $this->allyKing = new King($this->player, 7, 5);
 
         $this->player->createFigures([
             $this->figure,
-            $this->allyKing,
-            $this->allyPawn,
-            $this->testPawn
+            $this->allyKing
         ]);
 
         $this->enemyPlayer = $this->game->addPlayer('test2');
-        $this->enemyKing = new King($this->enemyPlayer, 3, 7);
-        $this->enemyBishop = new Bishop($this->enemyPlayer, 1, 5);
+        $this->enemyKing = new King($this->enemyPlayer, 2, 0);
+        $this->enemyBishop = new Queen($this->enemyPlayer, 4, 2);
 
         $this->enemyPlayer->createFigures([
             $this->enemyKing,
@@ -70,32 +62,23 @@ class FigureQueenTest extends TestCase
         for ($x = 7; $x >= 0; $x--) {
             for($y = 7; $y >= 0; $y--) {
                 if(
-                    ($x == 1 && $y == 0)
+                    ($x == 2 && $y == 0)
                     || ($x == 3 && $y == 0)
+                    || ($x == 4 && $y == 0)
                     || ($x == 5 && $y == 0)
-                    || ($x == 2 && $y == 1)
-                    || ($x == 3 && $y == 1)
-                    || ($x == 4 && $y == 1)
-                    || ($x == 0 && $y == 2)
-                    || ($x == 1 && $y == 2)
-                    || ($x == 2 && $y == 2)
-                    || ($x == 3 && $y == 2)
-                    || ($x == 4 && $y == 2)
-                    || ($x == 5 && $y == 2)
-                    || ($x == 2 && $y == 3)
-                    || ($x == 3 && $y == 3)
-                    || ($x == 4 && $y == 3)
-                    || ($x == 1 && $y == 4)
-                    || ($x == 3 && $y == 4)
-                    || ($x == 5 && $y == 4)
-                    || ($x == 0 && $y == 5)
-                    || ($x == 3 && $y == 5)
-                    || ($x == 3 && $y == 6)
-                    || ($x == 3 && $y == 7)
+                    || ($x == 7 && $y == 0)
+                    || ($x == 6 && $y == 0)
+                    || ($x == 6 && $y == 1)
+                    || ($x == 6 && $y == 2)
+                    || ($x == 6 && $y == 3)
+                    || ($x == 6 && $y == 4)
+                    || ($x == 6 && $y == 5)
+                    || ($x == 6 && $y == 6)
+                    || ($x == 6 && $y == 7)
                 ) {
-                    $this->assertTrue($this->figure->verify($x, $y, $allies, $enemies), "Queen true: x: $x, y: $y");
+                    $this->assertTrue($this->figure->verify($x, $y, $allies, $enemies), "true $x $y");
                 } else {
-                    $this->assertFalse($this->figure->verify($x, $y, $allies, $enemies), "Queen false: x: $x, y: $y");
+                    $this->assertFalse($this->figure->verify($x, $y, $allies, $enemies), "false $x $y");
                 }
             }
         }
@@ -113,14 +96,11 @@ class FigureQueenTest extends TestCase
         $enemies = $this->enemyPlayer->getFigures();
 
         $this->assertTrue($this->figure->attackKing($this->enemyKing, $allies,  $enemies));
-        $this->enemyKing->move(4, 7, $enemies, $allies);
-        $this->assertFalse($this->figure->attackKing($this->enemyKing, $allies,  $enemies));
+
     }
 
     function tearDown()
     {
         $this->game->delete();
     }
-
-
 }

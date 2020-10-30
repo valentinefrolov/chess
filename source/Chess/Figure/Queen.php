@@ -30,8 +30,7 @@ class Queen extends AbstractFigure
         $yStep = $y > $this->y ? +1 : -1;
 
         $i = 0;
-        while($i < abs($x - $this->x)-1) {
-
+        while($i < abs($x - $this->x)) {
             $i++;
             if(
                 !$this->checkEmptyCell($this->x + ($xStep*$i), $this->y + ($yStep*$i), $allies)
@@ -54,26 +53,26 @@ class Queen extends AbstractFigure
         }
 
         if($x < $this->x) {
-            for($i = $x+1; $i < $this->x; $i++) {
-                if(!$this->checkEmptyCell($i, $y, $allies) || !$this->checkEmptyCell($i, $y, $enemies)) {
+            for($i = $this->x - 1; $i >= $x; $i--) {
+                if(!$this->checkEmptyCell($i, $y, $allies) || ($i != $x && !$this->checkEmptyCell($i, $y, $enemies))) {
                     return false;
                 }
             }
         } else if($x > $this->x) {
-            for($i = $this->x+1; $i < $x; $i++) {
-                if(!$this->checkEmptyCell($i, $y, $allies) || !$this->checkEmptyCell($i, $y, $enemies)) {
+            for($i = $this->x + 1; $i <= $x; $i++) {
+                if(!$this->checkEmptyCell($i, $y, $allies) || ($i != $x && !$this->checkEmptyCell($i, $y, $enemies))) {
                     return false;
                 }
             }
         } else if($y < $this->y) {
-            for($i = $y+1; $i < $this->y; $i++) {
-                if(!$this->checkEmptyCell($x, $i, $allies) || !$this->checkEmptyCell($x, $i, $enemies)) {
+            for($i = $this->y - 1; $i >= $y; $i--) {
+                if(!$this->checkEmptyCell($x, $i, $allies) || ($i != $y && !$this->checkEmptyCell($x, $i, $enemies))) {
                     return false;
                 }
             }
         } else if($y > $this->y) {
-            for($i = $this->y+1; $i < $y; $i++) {
-                if(!$this->checkEmptyCell($x, $i, $allies) || !$this->checkEmptyCell($x, $i, $enemies)) {
+            for($i = $this->y + 1; $i <= $y; $i++) {
+                if(!$this->checkEmptyCell($x, $i, $allies) || ($i != $y && !$this->checkEmptyCell($x, $i, $enemies))) {
                     return false;
                 }
             }
