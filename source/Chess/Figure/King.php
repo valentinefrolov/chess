@@ -64,14 +64,23 @@ class King extends Queen implements IKing
         ];
 
         foreach($matrix as $pos) {
-            if($this->verify($pos['x'], $pos['y'], $allies, $enemies)) {
+            if(
+                $pos['x'] >= 0 && $pos['x'] <= 7
+                &&
+                $pos['y'] >= 0 && $pos['y'] <= 7
+                &&
+                $this->verify($pos['x'], $pos['y'], $allies, $enemies)
+            ) {
+                // can step here
+                // search for enemies attack on this position
+                // if only one enemy can attack, so we can not step there
                 foreach($enemies as $_enemy) {
                     if($_enemy->attackKing($this, $enemies, $allies, $pos['x'], $pos['y'])) {
-                        break 2;
+                        continue(2);
                     }
                 }
+                return true;
             }
-            return false;
         }
 
         foreach($allies as $ally) {
