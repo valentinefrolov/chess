@@ -2,6 +2,8 @@
 
 namespace Chess;
 
+use Chess\Figure\King;
+use Chess\Figure\Rook;
 use Exception;
 use PDO;
 
@@ -24,8 +26,7 @@ class Game
     /** @var array */
     private $output = [];
 
-    public function __construct()
-    {
+    public function __construct() {
         $host = '127.0.0.1';
         $db = 'chess';
         $user = 'root';
@@ -41,18 +42,15 @@ class Game
         $this->pdo = new PDO($dsn, $user, $pass, $opt);
     }
 
-    public function getId()
-    {
+    public function getId() {
         return $this->gameId;
     }
 
-    public function getColor()
-    {
+    public function getColor() {
         return $this->active;
     }
 
-    public function init($color = null): void
-    {
+    public function init($color = null): void {
         $this->reverse = $color == 'black';
         $time = time();
         $this->pdo->prepare("INSERT INTO game (start_time) VALUES ($time)")->execute();
@@ -69,6 +67,15 @@ class Game
         }
     }
 
+    public function castling(Rook $rook, King $king) {
+        if($rook->getX() < $king->getX()) {
+            $rookX = $king->getX()-1;
+            $kingX = $king->getX()-2;
+        } else {
+            $rookX = $king->getX()+1;
+            $kingX = $king->getX()+2;
+        }
+    }
 
     /**
      * @param string $player
@@ -76,8 +83,7 @@ class Game
      * @return Player|string
      * @throws Exception
      */
-    public function addPlayer(string $player, string $color = null) : Player
-    {
+    public function addPlayer(string $player, string $color = null) : Player {
         if(count($this->players) == 2) {
             throw new Exception('There can be no more than two players');
         }
@@ -110,8 +116,19 @@ class Game
         return $player;
     }
 
-    public function output(int $figureId, string $action, int $x = null, int $y = null)
-    {
+    public function update(int $figureId) : bool {
+        foreach($this->players as $player) {
+            if($figure = $player->getFigure($figureId)) {
+                $x = $figure->getX();
+                $y = $figure->getY();
+                $this->pdo->prepare("UPDATE figure SET x = $x, y = $y, status = 1 WHERE id = $figureId")->execute();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function output(int $figureId, string $action, int $x = null, int $y = null) {
         $this->output[] = [
             'id' => $figureId,
             'action' => $action,
@@ -141,8 +158,7 @@ class Game
         return false;
     }*/
 
-    public function getBoard()
-    {
+    public function getBoard() {
         $isBlack = $this->reverse;
         $rows = [];
         $abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
@@ -183,8 +199,7 @@ class Game
         return $rows;
     }
 
-    public function getFigures() : array
-    {
+    public function getFigures() : array {
         $return = [];
         foreach($this->players as $i => $player) {
             $return[$player->get('color')] = [];
@@ -200,13 +215,11 @@ class Game
         return $return;
     }
 
-    public function deleteFigure(int $id)
-    {
+    public function deleteFigure(int $id) {
         $this->pdo->query("DELETE FROM figure WHERE id = $id");
     }
 
-    public function check(int $id, int $figureId = null)
-    {
+    public function check(int $id, int $figureId = null) {
         $figureId = $figureId ? $figureId : 'NULL';
         $this->pdo->query("UPDATE player SET `check` = $figureId WHERE player.id = $id");
     }
@@ -216,8 +229,7 @@ class Game
         $this->pdo->query("UPDATE game SET status = 0, end_time = $date WHERE id = $this->gameId");
     }
 
-    public function delete()
-    {
+    public function delete() {
         $stmt = $this->pdo->query("SELECT * FROM player WHERE game_id = $this->gameId");
         $players = $stmt->fetchAll();
         foreach($players as $player) {
@@ -235,8 +247,7 @@ class Game
      * @return array
      * @throws Exception
      */
-    public function action(int $figureId, int $x, int $y) : array
-    {
+    public function action(int $figureId, int $x, int $y) : array {
         $currentFigure = null;
         $allies = [];
         $enemies = [];

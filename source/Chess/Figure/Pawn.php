@@ -7,14 +7,6 @@ use Chess\Player;
 
 class Pawn extends AbstractFigure
 {
-    private $firstMove = true;
-
-    public function __construct(Player $player, int $x, int $y)
-    {
-        parent::__construct($player, $x, $y);
-        $this->firstMove = ($player->atop() && $y != 1) || (!$player->atop() && $y != 6) ? false : true;
-    }
-
 
     public function verify(int $x, int $y, array $allies, array $enemies) : bool
     {
@@ -30,7 +22,7 @@ class Pawn extends AbstractFigure
             return false;
         }
 
-        $dist = $this->firstMove ? 2 : 1;
+        $dist = $this->status == 0 ? 2 : 1;
 
         // checking wrong distance
         if($diff > $dist) {
@@ -59,7 +51,6 @@ class Pawn extends AbstractFigure
             return false;
         }
 
-        $this->firstMove = false;
         return true;
     }
 

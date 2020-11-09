@@ -4,6 +4,8 @@ namespace Chess\Figure;
 
 use Chess\Game;
 use Chess\Player;
+use Exception;
+use Server\Room;
 
 abstract class AbstractFigure implements IWarrior
 {
@@ -24,13 +26,16 @@ abstract class AbstractFigure implements IWarrior
     protected $x = -1;
     /** @var int  */
     protected $y = -1;
+    /** @var int  */
+    protected $status = 0;
 
-    public function __construct(Player $player, int $x, int $y)
+    public function __construct(Player $player, int $x, int $y, int $status = 0)
     {
         $this->player = $player;
         $this->game = $this->player->get('game');
         $this->x = $x;
         $this->y = $y;
+        $this->status = $status;
     }
 
     abstract public function verify(int $x, int $y, array $allies, array $enemies) : bool;
@@ -78,13 +83,19 @@ abstract class AbstractFigure implements IWarrior
         return true;
     }
 
+    protected function update()
+    {
+        $this->status = 1;
+        $this->game->update($this->id);
+    }
+
     /**
      * @param int $x
      * @param int $y
      * @param array $allies
      * @param array $enemies
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     public function move(int $x, int $y, array $allies, array $enemies) : bool {
         // base check for no worries in implements
@@ -92,6 +103,28 @@ abstract class AbstractFigure implements IWarrior
             $this->output(static::ACTION_ERROR);
             return false;
         }
+
+        // checking for castling
+        if($this instanceof Rook && $this->status === 0) {
+            foreach($allies as $ally) {
+                if(
+                    $ally instanceof IKing
+                    && $ally->status === 0
+                    && $ally->x === $x
+                    && $ally->y === $y
+                    && $this->verify($x, $y, $allies, $enemies)
+                ) {
+                    $this->x = $this->x < $ally->x ? $x-1 : $x+1;
+                    $ally->x = $this->x < $ally->x ? $x-2 : $x+2;
+                    $this->output(static::ACTION_MOVE);
+                    $ally->output(static::ACTION_MOVE);
+                    $this->update($this->id);
+                    $this->update($ally->id);
+                    return true;
+                }
+            }
+        }
+
         // can not move to cell that taken allies figure
         if(!$this->checkEmptyCell($x, $y, $allies)) {
             $this->output(static::ACTION_ERROR);
@@ -146,11 +179,16 @@ abstract class AbstractFigure implements IWarrior
 
         $this->x = $x;
         $this->y = $y;
+        $this->status = 1;
+
+        $this->update($this->id);
 
         // verify for new check
         foreach($enemies as $enemy) {
             if($enemy instanceof IKing) {
                 if($this->attackKing($enemy, $allies, $enemies)) {
+                    $enemy->status = 1;
+                    $this->update($enemy->id);
                     $enemy->output(static::ACTION_CHECK);
                     $enemy->player->check($this->id);
                     if(!$enemy->canEscape($this, $enemies, $allies)) {

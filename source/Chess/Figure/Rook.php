@@ -18,4 +18,17 @@ class Rook extends Queen
     {
         return $this->canSaveStraight($king, $enemy, $allies, $enemies);
     }
+
+    protected function checkEmptyCell(int $x, int $y, array $items) : bool
+    {
+        foreach($items as $item) {
+            /** @var AbstractFigure $item */
+            if($item->player === $this->player && $item instanceof IKing && $item->status === 0 && $this->status === 0) {
+                continue;
+            } else if($item->getX() == $x && $item->getY() == $y) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

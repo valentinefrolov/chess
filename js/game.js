@@ -54,13 +54,13 @@ export class Game {
                             if(this.figures[j].id === data.figures[i].id) {
                                 if(data.figures[i].action === 'move' || data.figures[i].action === 'error') {
                                     const cell = $('#Board').find('[data-cell="'+ data.figures[i].x +' '+ data.figures[i].y +'"]');
-                                    //cell.css('background', 'red');
                                     const pos = cell.position();
-                                    this.finishMove(pos.left, pos.top);
                                     if(data.figures[i].action === 'move') {
                                         this.figures[j].x = data.figures[i].x;
                                         this.figures[j].y = data.figures[i].y;
                                     }
+                                    this.figures[j].object.css({left: pos.left, top: pos.top});
+
                                 } else if(data.figures[i].action === 'kill') {
                                     this.figures[j].kill();
                                     toKill = j;
@@ -75,10 +75,11 @@ export class Game {
                     if(toKill !== -1) {
                         this.figures.splice(toKill, 1);
                     }
+                    this.finishMove();
                 }
             } catch(e) {
                 if(game.action.figure) {
-                    this.finishMove(game.action.left, game.action.top);
+                    this.finishMove();
                 }
             }
         };
@@ -134,16 +135,15 @@ export class Game {
             });
 
             if (!found) {
-                game.finishMove(game.action.left, game.action.top);
+                game.finishMove();
             }
 
         });
 
     }
 
-    finishMove(left, top)
+    finishMove()
     {
-        this.action.figure.object.css({left: left, top: top});
         this.action.figure.object.removeClass('active');
         this.action.figure = null;
         this.action.left = 0;
