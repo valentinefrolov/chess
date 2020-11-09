@@ -99,15 +99,7 @@ abstract class AbstractFigure implements IWarrior
         }
 
         // implementing
-        if($this->verify($x, $y, $allies, $enemies)) {
-            foreach($enemies as $enemy) {
-                /** @var AbstractFigure $enemy */
-                if($enemy->getX() == $x && $enemy->getY() == $y) {
-                    $enemy->output(static::ACTION_KILL);
-                    $enemy->player->deleteFigure($enemy->id);
-                }
-            }
-        } else {
+        if(!$this->verify($x, $y, $allies, $enemies)) {
             $this->output(static::ACTION_ERROR);
             return false;
         }
@@ -122,7 +114,7 @@ abstract class AbstractFigure implements IWarrior
                 if($ally instanceof IKing) {
                     $king = $ally;
                     foreach($enemies as $enemy) {
-                        if($enemy->attackKing($king, $enemies, $allies)) {
+                        if($enemy->x != $this->x && $enemy->y != $this->y && $enemy->attackKing($king, $enemies, $allies)) {
                             $this->x = $initialX;
                             $this->y = $initialY;
                             $this->output(static::ACTION_ERROR);
@@ -134,12 +126,23 @@ abstract class AbstractFigure implements IWarrior
             $this->player->check(null);
         }
 
+        // checking to own check
         if($this instanceof IKing) {
             if(!$this->lookAround($x, $y, $allies, $enemies)) {
                 $this->output(static::ACTION_ERROR);
                 return false;
             }
         }
+
+        // checking to kill
+        foreach($enemies as $enemy) {
+            /** @var AbstractFigure $enemy */
+            if($enemy->getX() == $x && $enemy->getY() == $y) {
+                $enemy->output(static::ACTION_KILL);
+                $enemy->player->deleteFigure($enemy->id);
+            }
+        }
+
 
         $this->x = $x;
         $this->y = $y;

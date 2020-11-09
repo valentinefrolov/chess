@@ -47,7 +47,7 @@ class Knight extends AbstractFigure
     public function canSave(IKing $king, IWarrior $enemy, array $allies, array $enemies): bool
     {
         $initialX = $this->x;
-        $initialY = $this->x;
+        $initialY = $this->y;
 
         foreach($this->getPositions() as $item) {
             $this->x = $item['x']; $this->y = $item['y'];
