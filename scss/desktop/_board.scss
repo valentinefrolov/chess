@@ -3,6 +3,7 @@
   display: inline-block;
   margin: auto;
   position:relative;
+  user-select: none;
 
   &__table {
     border-collapse: collapse;

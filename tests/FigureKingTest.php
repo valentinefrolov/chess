@@ -60,6 +60,8 @@ class FigureKingTest extends TestCase
             $this->enemyBishop
         ]);
 
+        $this->game->start();
+
     }
 
 

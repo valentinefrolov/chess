@@ -49,6 +49,8 @@ class FigureKnightTest extends TestCase
             $this->enemyRook
         ]);
 
+        $this->game->start();
+
     }
 
     function testVerify() {

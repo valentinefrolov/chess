@@ -52,6 +52,7 @@ class FigureRookTest extends TestCase
             $this->enemyBishop
         ]);
 
+        $this->game->start();
     }
 
 

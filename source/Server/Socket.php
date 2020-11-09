@@ -40,8 +40,9 @@ class Socket implements MessageComponentInterface {
                     $game = $room->game();
                     $game->init($msg[1]);
                     try {
-                        $game->addPlayer('no_name_1', $msg[1]);
-                        $game->addPlayer('no_name_2');
+                        $game->addPlayer('no_name_1', $msg[1])->createFigures();
+                        $game->addPlayer('no_name_2')->createFigures();
+                        $game->start();
                     } catch (\Exception $e) {
 
                     }

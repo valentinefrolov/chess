@@ -21,7 +21,7 @@ class Game
     private $reverse = false;
     /** @var string */
     private $active = 'white';
-    /** @var array  */
+    /** @var array */
     private $output = [];
 
     public function __construct()
@@ -41,16 +41,32 @@ class Game
         $this->pdo = new PDO($dsn, $user, $pass, $opt);
     }
 
-    public function getId() {
+    public function getId()
+    {
         return $this->gameId;
     }
 
+    public function getColor()
+    {
+        return $this->active;
+    }
 
-    public function init($color = null) : void {
+    public function init($color = null): void
+    {
         $this->reverse = $color == 'black';
         $time = time();
         $this->pdo->prepare("INSERT INTO game (start_time) VALUES ($time)")->execute();
         $this->gameId = $this->pdo->lastInsertId();
+    }
+
+    public function start() {
+        $stmt = $this->pdo->prepare("INSERT INTO figure (`player_id`, `class_name`, `x`, `y`) VALUES (:playerId, :className, :x, :y)");
+        foreach ($this->players as $player) {
+            foreach($player->getFigures() as $figure) {
+                $stmt->execute(['playerId' => $player->get('id'), 'className' => get_class($figure), 'x' => $figure->getX(), 'y' => $figure->getY()]);
+                $figure->setId($this->pdo->lastInsertId());
+            }
+        }
     }
 
 
@@ -90,13 +106,6 @@ class Game
         $playerData['id'] = $this->pdo->lastInsertId();
 
         $player = new Player($playerData, $this, $onTop);
-
-        $stmt = $this->pdo->prepare("INSERT INTO figure (`player_id`, `class_name`, `x`, `y`) VALUES (:playerId, :className, :x, :y)");
-        foreach($player->getFigures() as $figure) {
-            $stmt->execute(['playerId' => $player->get('id'), 'className' => get_class($figure), 'x' => $figure->getX(), 'y' => $figure->getY()]);
-            $figure->setId($this->pdo->lastInsertId());
-        }
-
         $this->players[] = $player;
         return $player;
     }
@@ -240,8 +249,8 @@ class Game
                 $enemies = $player->getFigures();
             }
         }
-        if(!$currentFigure || !$allies || !$enemies) {
-            throw new Exception("Something went wrong");
+        if(!$currentFigure) {
+            throw new Exception("Figure $figureId not found");
         }
 
         if($currentFigure->move($x, $y, $allies, $enemies)) {

@@ -112,28 +112,17 @@ abstract class AbstractFigure implements IWarrior
             return false;
         }
 
-
-        if($this instanceof IKing) {
-            if(!$this->lookAround($x, $y, $allies, $enemies)) {
-                $this->output(static::ACTION_ERROR);
-                return false;
-            }
-        }
-
-        $initialX = $this->x;
-        $initialY = $this->y;
-
-        $this->x = $x;
-        $this->y = $y;
-
         // verify for existing check
         if($this->player->get('check')) {
-            $king = null;
+            $initialX = $this->x;
+            $initialY = $this->y;
+            $this->x = $x;
+            $this->y = $y;
             foreach($allies as $ally) {
                 if($ally instanceof IKing) {
                     $king = $ally;
                     foreach($enemies as $enemy) {
-                        if($enemy->attackKing($king, $allies, $enemies)) {
+                        if($enemy->attackKing($king, $enemies, $allies)) {
                             $this->x = $initialX;
                             $this->y = $initialY;
                             $this->output(static::ACTION_ERROR);
@@ -142,20 +131,26 @@ abstract class AbstractFigure implements IWarrior
                     }
                 }
             }
-            if(!$king) {
-                throw new \Exception('No King found :)');
-            }
             $this->player->check(null);
         }
+
+        if($this instanceof IKing) {
+            if(!$this->lookAround($x, $y, $allies, $enemies)) {
+                $this->output(static::ACTION_ERROR);
+                return false;
+            }
+        }
+
+        $this->x = $x;
+        $this->y = $y;
 
         // verify for new check
         foreach($enemies as $enemy) {
             if($enemy instanceof IKing) {
                 if($this->attackKing($enemy, $allies, $enemies)) {
-                    if($enemy->canEscape($this, $enemies, $allies)) {
-                        $enemy->output(static::ACTION_CHECK);
-                        $enemy->player->check($this->id);
-                    } else {
+                    $enemy->output(static::ACTION_CHECK);
+                    $enemy->player->check($this->id);
+                    if(!$enemy->canEscape($this, $enemies, $allies)) {
                         $enemy->output(static::ACTION_MATE);
                         $this->game->end();
                     }

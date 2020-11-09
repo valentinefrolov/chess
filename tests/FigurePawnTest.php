@@ -55,6 +55,8 @@ class FigurePawnTest extends TestCase
             $this->enemyKing
         ]);
 
+        $this->game->start();
+
     }
 
     function testVerify() {

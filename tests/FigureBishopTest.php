@@ -19,8 +19,10 @@ class FigureBishopTest extends TestCase
     protected $player = null;
     /** @var Player  */
     protected $enemyPlayer = null;
-    /** @var Queen  */
+    /** @var Bishop  */
     protected $figure = null;
+    /** @var Bishop  */
+    protected $figure1 = null;
     /** @var King */
     protected $allyKing = null;
     /** @var King */
@@ -36,10 +38,12 @@ class FigureBishopTest extends TestCase
 
         $this->player = $this->game->addPlayer('test1');
         $this->figure = new Bishop($this->player, 6, 4);
+        $this->figure1 = new Bishop($this->player, 7, 5);
         $this->allyKing = new King($this->player, 5, 7);
 
         $this->player->createFigures([
             $this->figure,
+            $this->figure1,
             $this->allyKing
         ]);
 
@@ -51,6 +55,8 @@ class FigureBishopTest extends TestCase
             $this->enemyKing,
             $this->enemyQueen
         ]);
+
+        $this->game->start();
 
     }
 
@@ -69,7 +75,6 @@ class FigureBishopTest extends TestCase
                     || ($x == 7 && $y == 3)
                     || ($x == 5 && $y == 5)
                     || ($x == 6 && $y == 4)
-                    || ($x == 7 && $y == 5)
                     || ($x == 4 && $y == 6)
                     || ($x == 3 && $y == 7)
                 ) {
@@ -85,18 +90,16 @@ class FigureBishopTest extends TestCase
     {
         $this->player->check($this->enemyQueen->getId());
         $this->assertTrue($this->figure->canSave($this->allyKing, $this->enemyQueen, $this->player->getFigures(), $this->enemyPlayer->getFigures()));
-        $this->figure->move(7, 5, $this->player->getFigures(), $this->enemyPlayer->getFigures());
-        $this->assertFalse($this->figure->canSave($this->allyKing, $this->enemyQueen, $this->player->getFigures(), $this->enemyPlayer->getFigures()));
+        $this->assertFalse($this->figure1->canSave($this->allyKing, $this->enemyQueen, $this->player->getFigures(), $this->enemyPlayer->getFigures()));
     }
 
     function testAttackKing()
     {
         $allies = $this->player->getFigures();
         $enemies = $this->enemyPlayer->getFigures();
-
         $this->assertTrue($this->figure->attackKing($this->enemyKing, $allies,  $enemies));
-        $this->enemyKing->move(2, 1, $enemies, $allies);
 
+        $this->enemyKing->move(2, 1, $enemies, $allies);
         $this->assertFalse($this->figure->attackKing($this->enemyKing, $allies,  $enemies));
     }
 
