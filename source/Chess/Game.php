@@ -12,7 +12,7 @@ class Game
     const PAT = 3;
 
     /** @var Player[] */
-    protected $players;
+    protected $players = [];
     /** @var PDO */
     private $pdo = null;
     /** @var int */
@@ -203,8 +203,8 @@ class Game
     }
 
     public function end() {
-        $date = date('Y-m-d H:i:s');
-        $this->pdo->query("UPDATE game SET status = 0, end_time = '$date' WHERE id = $this->gameId");
+        $date = time();
+        $this->pdo->query("UPDATE game SET status = 0, end_time = $date WHERE id = $this->gameId");
     }
 
     public function delete()
